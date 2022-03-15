@@ -134,22 +134,37 @@ namespace CAMotics {
       Rectangle3D bounds = project.getWorkpiece().getBounds();
       project.getWorkpiece().update(*path);
 
-      Simulation sim(path, 0, 0, bounds, project.getResolution(),
-                     time ? time : numeric_limits<double>::max(),
-                     renderMode, threads);
+      for (float i = 0; i < numeric_limits<double>::max(); i += 0.01)
+      {
+        cout << "Starting on " << i << endl;
+        Simulation sim(path, 0, 0, bounds, project.getResolution(),
+                       i,
+                       renderMode, threads);
 
-      SmartPointer<Surface> surface;
-      if (!shouldQuit()) surface = cutSim.computeSurface(sim);
+        SmartPointer<Surface> surface;
+        if (!shouldQuit())
+          surface = cutSim.computeSurface(sim);
 
-      // Reduce
-      if (reduce && !shouldQuit()) cutSim.reduceSurface(surface);
+        // Reduce
+        if (reduce && !shouldQuit())
+          cutSim.reduceSurface(surface);
 
-      // Export surface
-      if (!shouldQuit())
-        surface->writeSTL
-          (*output, binary, "CAMotics Surface", sim.computeHash());
+        // TODO: Check for collisions
+
+        // TODO: I think I'll have a named pipe outputting the STL data too
+        // (along with tool data and position)
+        // On the other side, I can have my docker that determines collision
+
+        // Export surface
+        if (!shouldQuit()){
+          char filename[255];
+          sprintf(filename, "%f.stl", i);
+          output = SystemUtilities::oopen(filename);
+          cout << "Writing out " << i << ".stl" << endl;
+          surface->writeSTL(*output, binary, "CAMotics Surface", sim.computeHash());
+        }
+      }
     }
-
 
     void requestExit() {
       Application::requestExit();
