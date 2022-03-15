@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "(gdb) Launch",
+            "name": "(gdb) GUI Launch",
             "type": "cppdbg",
             "request": "launch",
             "program": "/root/CAMotics/camotics",
@@ -33,6 +33,41 @@
                     "ignoreFailures": true
                 }
             ]
-        }
+        },
+        {
+            "name": "(gdb) CLI Launch",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "/root/CAMotics/camsim",
+            "args": [
+                "examples/flower_mold/flower_mold.camotics",
+                "test.stl",
+                "--threads",
+                "1"
+            ],
+            "stopAtEntry": false,
+            "cwd": "/root/CAMotics/",
+            "environment": [
+                {
+                    "name" : "DISPLAY",
+                    "value" : "10.0.0.15:0"
+                }    
+            ],
+            
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ]
+        },
     ]
 }
